@@ -62,5 +62,5 @@ Clone the github repo: https://github.com/CMU-Perceptual-Computing-Lab/openpose.
 
 Open cmake:
 ![](imageDirectory/cmake1.png)
-
+![](imageDirecory/cmake2.png)
 Set the correct location for source code and to the binary files. Select the boxes shown especially BUILD_PYTHON and the body_25 model as shown in image. Then click open project and be sure to generate it for windows 64x with visual studio 17 and build the solution. 
