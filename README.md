@@ -11,8 +11,23 @@ This has become especially relevant with the happening of Covid-19 pandemic in 2
 In conclusion, the CMU model has made significant progress over the last 4 years (since 2017 release) and is very precise from a front on perspective. The model is only reliable when the user is square to the camera, as human pose estimation continues to improve, hopefully one day it will have the reliability to be implemented into an application like Motion.
 
 ### Demo
-will do some more detailed documentation another day.
+will do some more detailed documentation explaining how ot works and the maths behind it another day.
+
+![](imageDirectory/dataflow.png)
+
+![](imageDirectory/exampleInput.png)
+
+![](imageDirectory/skeleton.png)
+
 ![](imageDirectory/allAngles.png)
+
+![](imageDirectory/splits.png)
+
+![](imageDirectory/squatAngles.png)
+
+![](imageDirectory/outputExample.png)
+
+
 
 
 #### Environment Set Up
@@ -62,8 +77,10 @@ Library Dependencies:
 Clone the github repo: https://github.com/CMU-Perceptual-Computing-Lab/openpose.git
 
 Open cmake:
+
 ![](imageDirectory/cmake1.png)
 
-![](imageDirecory/cmake2.png)
+
+![](imageDirectory/cmake2.png)
 
 Set the correct location for source code and to the binary files. Select the boxes shown especially BUILD_PYTHON and the body_25 model as shown in image. Then click open project and be sure to generate it for windows 64x with visual studio 17 and build the solution. 
