@@ -12,6 +12,7 @@ In conclusion, the CMU model has made significant progress over the last 4 years
 
 ### Demo
 will do some more detailed documentation another day.
+![](imageDirectory/allAngles.png)
 
 
 #### Environment Set Up
