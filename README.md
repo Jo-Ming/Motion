@@ -131,6 +131,8 @@ These considerations were considered with which methods could be abstracted into
 
 #### Construction and Attributes 
 
+![](imageDirectory/motionPic.PNG)
+
 When constructing the keypoints, keypointConnections, and Joints attributes they are corresponding to the body_25 model (shown in figure 13). The dimensions, imagePath, and threshold are required as parameters. 
 
 ## OpenPose API
