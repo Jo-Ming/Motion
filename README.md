@@ -10,7 +10,7 @@ This has become especially relevant with the happening of Covid-19 pandemic in 2
 
 In conclusion, the CMU model has made significant progress over the last 4 years (since 2017 release) and is very precise from a front on perspective. The model is only reliable when the user is square to the camera, as human pose estimation continues to improve, hopefully one day it will have the reliability to be implemented into an application like Motion.
 
-### Overview of human Pose Estimation 
+## Overview of human Pose Estimation 
 
 Carnegie Mellon University are among the forefront of AI research and in this case Human Pose Estimation. OpenPose was released in October 2017 and has since had frequent and major improvements. Best of all, it is freely available to all non-commercial use, alongside great documentation. It was not until later that it was decided to use the CMU body_25 model, but for background knowledge after reading from the official OpenPose cited documentation (Zhe Cao, 2018) and sources online (Tanugraha, 2019) , (Raj, 2019). Here is a brief overview.
 
@@ -21,9 +21,23 @@ The second approach is the bottom-up approach which OpenPose uses. This is where
 Confidence maps are a 2D representation of the belief that a particular key point occurs in each given pixel. If there is one person in the image, a single peak should exist in each confidence map if the corresponding part is visible.
 
 Part Affinity fields for part association needs a confidence value measuring the association of each pair of body parts belonging to which person within an image. This preserves the location and orientation information across the region supporting the limb (body part/key point). Represented by a 2-Dimensional vector field for each limb, pointing from one part of the limb to the other. Each limb has a part affinity field directing to associated body parts.
+![](imageDirectory/HPEOverview1.JPG)
+![](imageDirectory/HPEOverview2.JPG)
+
+From an RGB image input, the Convolutional Neural Network splits into two layers and is stacked, default stack depth is set to 6, refining its predictions at each stage. The first layer outputs Part Confidence Maps, and the second outputting Part Affinity Fields as shown in the pipeline of figure 1. Each iteration of the stack returns more confidence in results. Then finally, outputs are processed by greedy inference to output 2D pose points for each person in frame. Both the body_25 and COCO model mentioned later are based off this architecture (shown in figure 2).
+
+## Implementation/Realisation
+
+### Implementing a model
+
+The first problem was the decision in which model to use as a basis. This was a very important factor as the performance of the model would greatly impact the project. After researching the current best performing models open for commercial use and personal projects. Carnegie Mellon University (CMU) in Pennsylvania released OpenPose which achieves much better results than any other freely available model. 
+
+The first model implemented was a CPU based COCO model. As seen in figure 10, on an intel core i5 (2.90 GHZ) CPU it was running at 1.8 frames. This model tracks 17 points on the human body. When moving the frame rate would drop as low as 0.5 fps and would often be unable to confidently locate key points. This was an issue for a project which required a high degree of accuracy such as Motion.
+
+Figure 11 shows how the COCO model maps a human pose. It tracks 17 key points across the body, one major issue is that it does not track below the ankle. This information is extremely important for certain movements. Because of the slow speed and lack of accuracy it was decided it were best to switch to an alternative model. For implementation, an anaconda environment was created with an older version of TensorFlow (1.1.5.3) and python 3.7.9. As the original model is in C++ a wrapper called SWIG was used so it could be implemented with python.
 
 
-#### Demo
+## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
 
 ![](imageDirectory/dataflow.png)
@@ -43,7 +57,7 @@ will do some more detailed documentation explaining how ot works and the maths b
 
 
 
-##### Environment Set Up
+## Environment Set Up
 
 Setting up a working environment proved to be very difficult as every user online had a different set up. This took a large amount of time trying different combinations which others claimed to work. Firstly Tensorflow-gpu and Keras were set up and installed within the environment. In the end downgrading Cuda from 11.1 to 10.2 and Cudnn from 8.0.5 to 7.6.5 helped solve some compatibility issues (although various other driver updates were installed). Cmake was used as a python wrapper for the model. The last hurdle was building the environment, downgrading to Visual Studio 2017 but only by using the Enterprise edition somehow worked. In the end, the environment was as follows:
 
