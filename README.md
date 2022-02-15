@@ -2,7 +2,7 @@
 
 This was a project I did at University, as the technology was really new at the time, there was very few sources, examples, and references online and so it took a lot of time to figure some of this stuff out. I hope this can help give some people an idea of how to implement the CMU model and save them a lot of time so they can implement them into their own awesome projects :). 
 
-At the end, if I remember, I'll discuss potential methods to improve performance.
+At the end, if I remember, I'll discuss potential methods to improve performance. Also environment setup might be quite different depending on hardware, this was by far one of the most annoying parts as it is mostly a process of denial and error.
 
 ## Abstract
 
@@ -229,6 +229,27 @@ And for an image with two people, something like this:
 
 This returns a coordinate and confidence for each key point using a list of String types. This is not in a useful form and even for 1 person it is returned as a 3-Dimensional list, a  list for each image containing a pose. The format of the list after dimensionality reduction of the list will be 2-Dimensional, then splitting each element in the list from [string] to  [x, y , confidence].
 
+### Formatting the desired pose 
+
+As the output from the pose estimation model is not in a form that can be easily manipulated, the format needs to be changed so that the data can be called and analysed.
+
+This process is broken down into 3 steps:
+1.Getting the complete pose data list 
+2.Find target/focal pose.
+3.Format focal pose
+This is however, assuming the person/pose most centred to the camera frame is intended to be the subject for analysis.
+
+![](imageDirectory/setPose.PNG)
+
+Once the pose list is received, find the centre of the frame and findTarget() is called to return the focal pose. 
+
+By accumulating the distances of key points from the centre of the frame for each pose, the location of the smallest distance in the list will represent the position of the most central pose. Then this function in figure 22 will call the getPerson() function to isolate the specific array targeted at this person. Once the targeted pose is received it is passed into the formatPose(targetPose) function.
+
+![](imageDirectory/getTarget.PNG)
+
+The starting form of the pose returned from the OpenPose API is a list of strings as it would have used this to write to a JSON file. To format the pose, each string representing a key point is formatted individually with the function shown in figure 23 formatKeyPoint(), the complete formatted pose is constructed from the sum of each formatted key point. To format an individual point the “[“ and “]” are sliced off either side and then the splitting function is used to divide the elements between whitespace into a single list. Which should provide 3 elements representing the X , Y , and confidence value. In hindsight it may have been wise to cast this data as a float [] here in preparing for future calculations, however this had little impact in the long run. The formatted pose is returned to setPose() in figure 21.
+
+![](imageDirectory/formatPose.PNG)
 
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
