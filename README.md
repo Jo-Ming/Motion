@@ -245,11 +245,33 @@ Once the pose list is received, find the centre of the frame and findTarget() is
 
 By accumulating the distances of key points from the centre of the frame for each pose, the location of the smallest distance in the list will represent the position of the most central pose. Then this function in figure 22 will call the getPerson() function to isolate the specific array targeted at this person. Once the targeted pose is received it is passed into the formatPose(targetPose) function.
 
-![](imageDirectory/getTarget.PNG)
+![](imageDirectory/findTarget.PNG)
 
 The starting form of the pose returned from the OpenPose API is a list of strings as it would have used this to write to a JSON file. To format the pose, each string representing a key point is formatted individually with the function shown in figure 23 formatKeyPoint(), the complete formatted pose is constructed from the sum of each formatted key point. To format an individual point the “[“ and “]” are sliced off either side and then the splitting function is used to divide the elements between whitespace into a single list. Which should provide 3 elements representing the X , Y , and confidence value. In hindsight it may have been wise to cast this data as a float [] here in preparing for future calculations, however this had little impact in the long run. The formatted pose is returned to setPose() in figure 21.
 
 ![](imageDirectory/formatPose.PNG)
+
+### Finding Angles
+
+A useful function is Euclidean distance defined as:
+
+![](imageDirectory/euclid.PNG)
+
+Where   p,q  are two points within a Euclidean space of n dimensions and q_i and p_i are Euclidean vectors starting from the origin of space. This was implemented into the functions.py file as the following:
+
+![](imageDirectory/getEuclid.PNG)
+
+The information on this relationship between two points was imperative to this project. With this function much more information can be derived. 
+
+In the JointsList attribute joints around the body are represented by a list of 3 key points. To utilise this into context and find angles, it is possible to Triangulate them by finding the distances between each point as shown in figure 24. 
+
+![](imageDirectory/triangle.PNG)
+
+From there, using trigonometry, it is known that the lengths of sides to any triangle relate to the cosine of one of its angles. This is called the law of cosines which formula is the following:
+
+![](imageDirectory/lawOfCosines.PNG)
+
+Using this formula, it can be rearranged to make angle C (opposite to corresponding side c) the subject:
 
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
