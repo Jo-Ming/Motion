@@ -34,11 +34,18 @@ The first problem was the decision in which model to use as a basis. This was a 
 
 The first model implemented was a CPU based COCO model. As seen in figure 10, on an intel core i5 (2.90 GHZ) CPU it was running at 1.8 frames. This model tracks 17 points on the human body. When moving the frame rate would drop as low as 0.5 fps and would often be unable to confidently locate key points. This was an issue for a project which required a high degree of accuracy such as Motion.
 
-![](imageDirectory/coco.png)
+![](imageDirectory/coco.PNG)
 
 Figure 11 shows how the COCO model maps a human pose. It tracks 17 key points across the body, one major issue is that it does not track below the ankle. This information is extremely important for certain movements. Because of the slow speed and lack of accuracy it was decided it were best to switch to an alternative model. For implementation, an anaconda environment was created with an older version of TensorFlow (1.1.5.3) and python 3.7.9. As the original model is in C++ a wrapper called SWIG was used so it could be implemented with python.
-![](imageDirectory/coco2.png)
+![](imageDirectory/coco2.PNG)
 
+Not long after this (17th of November 2020) CMU released the newest version of OpenPose 1.7. (CMU, 2017) Using the body_25 model, which is 40% faster and 5% more accurate and includes foot key points. 
+
+When implementing body_25 model for speed it was GPU boosted, however should be no different to a CPU implementation, only faster.
+
+his model was significantly better, as it ran between 14-15 frames per second even with large amounts of movement. On top of this, the body_25 model tracks 24 key points (25 if you include the background) including toes and heels, which is very valuable for analysing many movements where the individual is on their feet.
+
+As shown in figure 13 this mapping Is far more intricate which will allow for more in-depth analysis. For example, by having points 1 (Neck), 8 (Mid-hip), 9 (Right-hip), and 12 (Left-Hip). It is much easier to detect posture or tilting in the upper body. It also looks to be a much truer representation of  a human pose. This model also maps below the ankle ,points 21 and 21 track the heels and points (22,23) , (19,20) tracks the big and little toes on each foot. This degree of pose estimation allows analysis in the relationship between heel and toes. This can be used as an indicator for balance or for a squat, it could show if heels are leaving the ground (which is quite common in inflexible people) and can be done by looking at the distances between the ankles and toes. In the real world, these distances will not change however, if the distance between the corresponding toes and ankles increase from the perspective of the camera then the cause of this would be due to the heel coming off the floor. Because of the overwhelming advantages and good documentation for the second implementation, that was the model chosen in the further development of Motion.
 
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
