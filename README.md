@@ -283,6 +283,29 @@ Calculating all the angles did not significantly increase the runtime so it was 
 
 ![](imageDirectory/picsFindAngles.PNG)
 
+### Drawing Skeleton
+
+Once all the necessary information is acquired i.e., pose and which key points are connected to each other. The points and connections can be plotted onto an image by drawing a circle at each key point and connecting them using straight lines (this was shown in figure 29). To achieve this, tools from the OpenCV package cv2 cv2.line() and cv2.circle allows plotting onto the image resulting in an drawing which looks somewhat like a skeleton.
+
+![](imageDirectory/drawSkeleton.PNG)
+
+Because the skeleton is drawn from the reference of the pose, it can be drawn onto any image. For example, in the image Directory there is a blank canvas image which the skeleton can be drawn onto as shown in figure 29.
+
+![](imageDirectory/skeleton.png)
+
+These images can then be stitched together to produce a totally anonymous .avi video file of just the pose from every frame of an input. The coordinates must be converted from a string to a float first, then a float to an int.
+
+### Scale, Centre, and Normalise Pose
+
+If one bases of scoring is to compare an input pose to a ‘model pose’ it is imperative to Scale, Centre, and Normalise them first. This is because someone standing closer to the camera would appear much larger than someone further away. Positioning also matters as someone standing to the side of one frame compared to another may have very similar poses but very different pixel values, making comparison tricky. To do this the pose needs to be scaled. This was done by finding the extreme values within the pose both (min and max) and the average for both x and y values. The scale factor is determined by the largest dimension (between x and y ranges), then each new point:
+
+This way the relationships of each points are relative to the centre of the pose instead of relative to their original camera frames.
+
+![](imageDirectory/SCN.PNG)
+
+With the pose data in this format pose comparison data becomes far more valid. Although different body types can still have varying proportions, this is still far more credible than comparing the original data. The function mad also passes a flat list, meaning it is possible to use this as an input for a convolutional neural network.
+
+
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
 
