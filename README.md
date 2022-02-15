@@ -515,7 +515,7 @@ Another issue was that when nearing the demonstration period, when trying to use
 
 
 ## Demo
-will do some more detailed documentation explaining how ot works and the maths behind it another day.
+Had some other sections about testing etc. may add them in the future
 
 ![](imageDirectory/dataflow.png)
 
@@ -530,6 +530,65 @@ will do some more detailed documentation explaining how ot works and the maths b
 ![](imageDirectory/squatAngles.png)
 
 ![](imageDirectory/outputExample.png)
+
+here are all the resources I used to help me with my project.
+
+Bibliography
+CMU, 2017. CMU-Perceptual-Computing-Lab/openpose. [Online] 
+Available at: https://github.com/CMU-Perceptual-Computing-Lab/openpose
+[Accessed 2021].
+CMU, 2020. openpose. [Online] 
+Available at: https://github.com/CMU-Perceptual-Computing-Lab/openpose
+[Accessed May 2021].
+CMU, 2021. 1.7 OpenPose Documentation. [Online] 
+Available at: https://cmu-perceptual-computing-lab.github.io/openpose/web/html/doc/md_doc_02_output.html
+[Accessed May 2021].
+Deydre S Teyhen, S. W. S. C. L. L. J. P. H. D. F. D. M. J. W. J. L. D. J. D. C., 2012. The Functional Movement Screen: a reliability study. [Online] 
+Available at: https://pubmed.ncbi.nlm.nih.gov/22585621/
+[Accessed May 2021].
+Dr. Anthony G. Schneiders, 1. Å. D. E. H. a. P. S. J. S., 2011. FUNCTIONAL MOVEMENT SCREENTM NORMATIVE VALUES IN A YOUNG, ACTIVE POPULATION. [Online] 
+Available at: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3109893/
+[Accessed May 2021].
+FMS, 1997. AN INTRODUCTION TO THE FUNCTIONAL MOVEMENT SCREEN. [Online] 
+Available at: https://www.functionalmovement.com/files/Articles/572a_FMS_Article_NoBleed_Digital.pdf
+[Accessed May 2021].
+Gray Cook, L. B., n.d. The Functional Movement Screen. [Online] 
+Available at: http://www.advanced-fitness-concepts.com/fms.pdf
+[Accessed may 2020].
+Harvard, M. S., 2019. More evidence that exercise can boost mood. [Online] 
+Available at: https://www.health.harvard.edu/mind-and-mood/more-evidence-that-exercise-can-boost-mood
+[Accessed May 2021].
+Kyle Kiesel, P. J. P. M. L. V., 2007. Can Serious Injury in Professional Football be Predicted by a Preseason Functional Movement Screen?. [Online] 
+Available at: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2953296/
+[Accessed May 2021].
+Med, J. S., 2017. Functional Movement Screen: Pain versus composite score and injury risk. [Online] 
+Available at: https://pubmed.ncbi.nlm.nih.gov/28919122/
+[Accessed May 2020].
+MERRICK, T., 2017. 20 Minute Full Body Flexibility Routine. [Online] 
+Available at: https://www.bodyweightwarrior.co.uk/blog/20-min-full-body-flexibility-routine
+[Accessed May 2021].
+Mind.org.uk, 2020. Mental health facts and statistics. [Online] 
+Available at: https://www.mind.org.uk/information-support/types-of-mental-health-problems/statistics-and-facts-about-mental-health/how-common-are-mental-health-problems/#References
+[Accessed May 2021].
+Morrison, T., n.d. The Ultimate Daily Mobility Routine. [Online] 
+Available at: https://tommorrison.uk/blog/2017-01-31/the-ultimate-daily-mobility-routine
+[Accessed May 2021].
+Nicholas A. Bonazza, d. S. C. A. O., 2016. Reliability, Validity, and Injury Predictive Value of the Functional Movement Screen: A Systematic Review and Meta-analysis. [Online] 
+Available at: https://journals.sagepub.com/doi/abs/10.1177/0363546516641937
+[Accessed May 2021].
+Raj, B., 2019. An Overview of Human Pose Estimation with Deep Learning. [Online] 
+Available at: https://medium.com/beyondminds/an-overview-of-human-pose-estimation-with-deep-learning-d49eb656739b
+[Accessed May 2021].
+SNAPE, J., 2014. Mobility Workout To Improve Your Flexibility. [Online] 
+Available at: https://www.coachmag.co.uk/bodyweight-workouts/3561/mobility-workout-to-improve-your-flexibility
+[Accessed May 2021].
+Tanugraha, P., 2019. Understanding OpenPose (with code reference)— Part 1. [Online] 
+Available at: https://medium.com/analytics-vidhya/understanding-openpose-with-code-reference-part-1-b515ba0bbc73
+[Accessed May 2021].
+Zhe Cao, G. H. T. S. S.-E. W. Y. S., 2018. OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields. [Online] 
+Available at: https://arxiv.org/abs/1812.08008
+[Accessed May 2021].
+
 
 
 
