@@ -1,8 +1,8 @@
 # Motion
 
-This was a project I did at University, as the technology was really new at the time, there was very few sources, examples, and references online and so it took a lot of time to figure some of this stuff out. I hope this can help give some people an idea of how to implement the CMU model and save them a lot of time so they can implement them into their own awesome projects :). 
+This was a project I did at University, as the technology was really new at the time, there was very few sources, examples, and references online and so it took a lot of time to figure some of this stuff out. I hope this can help give some people an idea of how to implement the CMU model and save them a lot of time so they can implement them into their own awesome projects whilst hopefully finding better ways to do things :). 
 
-At the end, if I remember, I'll discuss potential methods to improve performance. Also environment setup might be quite different depending on hardware, this was by far one of the most annoying parts as it is mostly a process of denial and error.
+At the end, if I remember, I'll discuss potential methods to improve performance. Also environment setup might be quite different depending on hardware, this was by far one of the most annoying parts as it is mostly a process of denial and error. Apologies for using images instead of code blocks, I already had these images saved so I thought it would be quicker to use those instead. I may change this in the future.
 
 ## Abstract
 
@@ -91,7 +91,7 @@ When implementing body_25 model for speed it was GPU boosted, however should be 
 
 ![](imageDirectory/body25.PNG)
 
-his model was significantly better, as it ran between 14-15 frames per second even with large amounts of movement. On top of this, the body_25 model tracks 24 key points (25 if you include the background) including toes and heels, which is very valuable for analysing many movements where the individual is on their feet.
+This model was significantly better, as it ran between 14-15 frames per second even with large amounts of movement. On top of this, the body_25 model tracks 24 key points (25 if you include the background) including toes and heels, which is very valuable for analysing many movements where the individual is on their feet.
 
 ![](imageDirectory/body252.PNG)
 
@@ -347,7 +347,7 @@ This way the relationships of each points are relative to the centre of the pose
 
 With the pose data in this format pose comparison data becomes far more valid. Although different body types can still have varying proportions, this is still far more credible than comparing the original data. The function mad also passes a flat list, meaning it is possible to use this as an input for a convolutional neural network.
 
-![](imageDirectory/getFSNPose.PNG)
+![](imageDirectory/getSFNPose.PNG)
 
 ### Motion class
 
@@ -377,6 +377,142 @@ To get around this issue a quicksort function was implemented in the functions.p
 ![](imageDirectory/sortFrames.PNG)
 
 This quicksort/merge sort hybrid using recursion shown in figure 38 is more efficient over sorting a smaller number of elements (up to around 100,000) than the traditional quicksort as there is no generation/replication of lists each iteration. A typical quick sort will pass 3 lists each recursive call smaller values, equal values, larger values. So, for shorter lists, this method is better optimised.
+
+### Overhead Squat Analysis
+
+For the demonstration, an overhead squat analysis was implemented. Firstly, in order to begin analysis of an overhead squat the following key points need to be located shown in figure 39. To locate a key point the .getCoordinates(keyPoint) function can be called to return the X and Y position on the image.
+
+![](imageDirectory/squat1.PNG)
+
+![](imageDirectory/squat2.PNG)
+
+The getSquatDistances() in appendix 3 returns the distances shown in figure 40 plus the nose to mid hip distance. 
+
+To start with it asks for a height to be input. By having a measurement of the user’s height (in cm), it is possible to estimate a rough gauge for distance (cm) per pixel.  When getting the input as shown in figure 42, the user must input an integer as a height and a valid video file (shown in figure 41). If neither of these conditions are met, then the console will continue asking until valid inputs are parsed. Once a valid video input is parsed, the user is then shown the video found and asked if this is the desired video. If it is not, then the user is asked again to input a video file.
+
+![](imageDirectory/ui.PNG)
+
+![](imageDirectory/getInput.PNG)
+
+![](imageDirectory/overheadSnip1.PNG)
+
+Once the Motion object is made, codifymotion() is called in figure 42. The .getAtLowest() function will check each frame and return the frame position with the lowest value. Which is essentially a search algorithm, shown below in figure 44. The .getAtHighest() does the same thing except the highest point.
+
+![](imageDirectory/lowest.PNG)
+
+This frame of the lowest and highest part of the squat is then displayed to the user alongside a console output of the pose as shown in figure 45 and the analysis of the squat begins.  The first part is a static analysis meaning that only certain frames are analysed in this case the standing position in contrast to the bottom of the squat. This was mostly hard coded in order to save time, but the concepts are still there.
+
+![](imageDirectory/pose1.PNG)
+
+![](imageDirectory/overheadSnip2.PNG)
+
+Figure 46 shown above, displays how to call the coordinates of specific key points and angles of targeted points in a motionPicture object.  The function the calls getSquatDistances() which returns a list of distances in the order of: [wrist distance, elbow distance, shoulder distance, Hip width, nose to mid hip distance, knee distance, ankle distance, right big toe to right heel, left big toe to left heel]. Then getSquatRatios() returns a list in order [ElbowDist to shoulderDist, KneeDist to Waist width, feet distance to shoulderDist] and get squat angles in the order [NeckTiltRight, RShoulder, LShoulder, RElbow, LElbow, lowerBackTiltRight, LHip, RHip, LAnkle, RAnkle]. The full functions are shown in appendix 3. This information can then be compared. For example, the positions of the upper body ideally should be symmetrical, if there is a large difference in angle between shoulders one side is more restricted, then the target areas list will be updated with restricted/poor mobility areas which is checked in figure 47.
+
+![](imageDirectory/overheadSnip3.PNG)
+
+Figure 48 shows the code for then displaying the upper body angles mapped onto the bottom the squat. Then the ratio between the shoulder and elbow distances is checked from the botSquatRatios list. Anything around or below 1 would be considered great mobility in the shoulders, a ratio where the distances between the elbows are greater than twice that of the shoulders would be considered quite poor shoulder mobility. A line is then drawn to connect the elbows and an estimation of distance is displayed. If the distance of the elbows is greater than twice that of the shoulders, then this signals tight shoulders and thoracic spine which are added to the target areas. This user has poor shoulder mobility.
+
+![](imageDirectory/squat3.PNG)
+![](imageDirectory/squat4.PNG)
+
+Another domain which is checked is the imbalance between the shoulder and elbow angles which should be within a few degrees of one another. Otherwise, this could show a potential injury/restriction in one of the users’ shoulders or upper back. Figure 48 shows the output with the pose and angles plotted onto the user’s squat. Figure 49 estimates the distance in cm based off the input height and pose size proportions and draws the distance between the users’ elbows. 
+
+![](imageDirectory/overheadSnip4.PNG)
+
+The snippet of code shown in figure 50 finds upper body parts from the standing and squatted position so that the start and finishing positions can be compared. If from the perspective of the camera, the distance between the wrists and connected shoulders are getting closer and the distance between the head and the hips decreases(in this case by more than 15%), the hands will be coming forward which can be due to a tight thoracic spine and/or shoulders. If that is the case, then add these areas to the target area list.
+
+![](imageDirectory/overheadSnip5.PNG)
+
+After outputting the image with the lower body angles shown in figure 51, retrieved data on the toe and ankle locations of both feet is checked to see if the distance has increased at the bottom of the squat. If the distance has increased, the heel has come off the floor as the real distance should not change. This could also be consolidated via comparing the starting and finishing height of both heels. If the heels do come off the floor, then the calf area is added to the target area list. 
+
+![](imageDirectory/overheadSnip6.PNG)
+
+The code then checks to see if the hips go below knee level so this can be considered a deep squat. If an individual struggles to get their hips below knee height, this could be due to limitations in the lumbar spine, glutes, calves, and/or hips. Add those target areas to the list in the case that the squat is not deep enough. By using the vectors in both feet, the analyser then finds the gradients of both feet and can use these to see if either or both feet are facing inward (which is really bad news for squatting form!). The right foot vector should have a vertical or positive gradient and the left foot vector should have a vertical or negative gradient.
+
+![](imageDirectory/overheadSnip7.PNG)
+
+For an ideal form when doing a squat, the individual should remain symmetrical throughout the movement. One way the analyser checks this is to create a line connecting the shoulders and a line across the hips/waistline. By finding the gradients of both lines, knowing they are at different positions within the same 2-D space. If they have the same gradient, they must therefore be parallel. This signifies a balanced and symmetrical mid body form by checking if these lines remain parallel throughout the full range of movement. The code then checks to see if the persons head stays in line, by working out the average x coordinate for the nose and working out the standard deviation. The higher the standard deviation is the less stability there was throughout the movement, more deviation from the average/centre line and a higher ‘wobbleIndex’. Finally, a request is made to the exercise bank function after removing duplicates and recommended stretches are shown to the user.
+
+![](imageDirectory/output1.PNG)
+
+Figure 57 shows a routine put together to target this user’s shoulder and T-spine area each with a description and images for clarity (examples in figure 55 and 56).
+
+### Pose Similarity 
+
+In attempt to score a motion, one idea was to compare a pose to a ‘goal’ pose to find a similarity between them. The most obvious method is to find a similarity based on Euclidean distance.
+
+![](imageDirectory/cumDist.PNG)
+
+This function iterates through pose1 and adds the distance of each point to the corresponding point of pose2 to the cumulative distance and returns it. The smaller the index the more similar these poses are. Although this can be used as an indication, it is by no means reliable enough to base scoring off as some parts of the body might take higher precedence over others. For example, in monitoring shoulder flexibility the lower body is unimportant. It also does not take into consideration the direction vectors of body parts or pairs of body parts so it might see a plank/press up position to be very similar to somebody just lying on their front. Even people with different body proportions might be performing the same movement however one has wider hips and the other has wider shoulders so this would not be a fair evaluation.
+
+Cosine similarity is a measure of similarity between two non-zero vectors, by comparing the angular distance.
+
+The cosine similarity between two vectors represented by:
+
+![](imageDirectory/cosineSim.PNG)
+
+Being the dot product divided by the product of these vectors’ magnitudes.
+
+By working out the angle between the vectors if the difference in angle is near 0 degrees, then the similarity will be close to 1 as cos(θ) = 1. If the vectors are almost perpendicular to each other near 90 degrees, then similarity will be near 0 and -1 if angle is 180 degrees. 
+
+![](imageDirectory/sim1.PNG)
+![](imageDirectory/sim2.PNG)
+
+Python does not have a vector datatype without additional libraries so instead the vector was represented in a list. To convert 2 points into a vector as :
+![](imageDirectory/fig63.PNG)
+
+![](imageDirectory/vectDot.PNG)
+
+![](imageDirectory/vectNorm.PNG)
+
+![](imageDirectory/simil.PNG)
+
+Figure 67 and figure 68 display results of the similarity functions in figure 55 and 56 over each frame of 2 movements. These two similarities together might provide useful qualitative data for pose similarity, but overall, this is not a good method for quantifying or scoring a movement. One reason being it would be practically impossible to get a perfect score. As seen in figure 67 the two squats remain similar (low distance) and are least similar between frames 80-100 where the distance peaks. On the other hand, in figure 68 the similarity falls and troughs in this period meaning although still quite similar the direction vectors on the pose differed most within these frames 80-100. Overall, these two motions are shown to be very similar however, these take into consideration time taken to complete a movement if an identical motion is twice as fast it will show to be very different. One idea to attempt to improve this is to try and synch the videos using dynamic warping across the motions found in the videos in attempt to synch across the two temporal sequences and match shapes for similarity across the warping pathways of each pose points. This could then determine a measure of their similarity independent of certain non-linear variations in the time dimension (although the ability to perform a full range of motion more slowly does tend to imply more control!). In order to begin synching, checkpoints would be required to avoid analysis of excess/unnecessary movements, although for a squat this might be considerably easier to take the frame where hips are lowest to be the halfway point and the initial highest to be the start and the later highest to be the end, this would not be as straight forward for other movements. Since the code for calculating Euclidean distance between poses has already been written, K-Nearest neighbour classification can be quickly implemented.
+
+### Pose classification.
+
+Already having a Euclidean distance function, creating a pose similarity function based on distance was straight forward. To then implement a K-nearest neighbour algorithm was as follows:
+
+![](imageDirectory/KNN.PNG)
+
+The KNN Classifier finds the distance of the input pose to every labelled example pose and add them to a list. Then the list was sorted using another similar implementation of the quick sort method in figure 38. Then take the first k number of elements from the sorted list. The modal value of the k-nearest neighbour class list will be the class prediction. In other words, classification is determined by the majority vote amongst the k nearest neighbours’ classifications. 
+
+Another method used for classification was a neural network.
+
+![](imageDirectory/CNN.PNG)
+
+Convolutional Neural Network followed a sequential model with a 1-dimensional convolutional input layer was used with a kernel size of 3 as the input layer, 1 batch normalisation layer was added to help the model converge sooner. This version had 2 dense layers of 68 nodes using rectified linear activations. The last dense layer used a ‘sigmoid’ activation although normally for multi class classification SoftMax activation is better, in testing sigmoid was producing far better results. The ‘adam’ optimiser was used over stochastic gradient decent as it was far better at handling sparse gradients in this noisy problem. Having a reliable classification model implemented could potentially help optimise Motion. For example, it would be cheaper to run the model over frames and analyse relevant frames instead of analysing every frame regardless.
+
+![](imageDirectory/CNNResult.PNG)
+
+his model was trained off a very small dataset of size 37 with only 4 classifications - Downward Dog, Cobra pose, Squat, Stand. To avoid overfitting, it might be worth applying a drop out layer. By adding a random probability of a node not firing it may avoid nodes overspecialising. Ultimately to improve this model a much larger data set (with lots of different people/body types) would be required. This would then allow the lowering of its learning rate to further reduce chance of overfitting. One quick improvement would have been to flip all the training images and pass them back in to train the model, doubling the amount training data. The model was achieving 90% accuracy in testing, but the testing pool was too small to determine if this is valid. Convolutional Neural Networks tend to work better with input data ranging between 0 and 1, whereas the parsed data was ranged between -0.5 and 0.5 (centre of the pose being 0,0). With more training and testing data it may be worth comparing the performance of this model to one trained off the normalised + scaled pose vector data.
+
+## Conclusion
+
+The result of motion was not what was expected but it was still a large project with lots of great learning opportunities. The pose estimation model struggled to have high confidence with side profiles and bodies on the floor, this cause a lot of limitation when trying to realise Motion with which movements could confidently be analysed. Properly locating tight and restricted areas would require the analyses across multiple movements (probably at least 7). 
+
+After more research and approaching further into development it was realised that some of the original aims were unrealistic due to difficulty or timeframe. During the early stages of Motion, it was intended to attempt to score a movement, in combination with that, the only intended percept was from single camera video footage. Although attempts at both were made, a compromise was made. Attempting to score a movement was proving to be difficult and time consuming. With timeframe and setbacks from Covid 19 doing both aims to the degree intended was no longer feasible. It was originally intended to be a user-friendly application with a graphical user interface, and a lot of the interaction was dependent on having implemented a whole range of motions/movements the user was assessed across. Some adjustments were made with the given considerations and timeframe, focusing more on implementation and functionality. 
+
+The first aim stated in the introduction was to create a program where the user can establish which areas might be lacking and enables a rough gauge on their current flexibility and mobility. This goal was achieved to a degree of providing a list of effective exercises for the user. Ideally, the training program would have had tailored rep ranges and durations but due to time limitations this was a much faster solution. In hindsight, another fast solution was available where instead of the duplicates in the target area being removed (shown in figure 44), a general workout plan could have been provided as a base and then areas with more repeats could have more (intense) stretches, with more repetitions and longer durations.
+
+The second aim was to effectively communicate to the user which ranges on movement are more restricted and need working on. In the initial proposal it was stated that there would be a GUI instead it has now been implemented in the console and the target areas are clearly printed out. Because the information retrieving is self-contained making a good-looking interface would be straight forward and it may be possible to create a tool for implementing more movements in the future. 
+1.	Observe the user using a camera/video as an input.
+2.	Retrieve relevant data from the input.
+3.	Estimate users pose/position throughout motion (full range of movement).
+4.	Assess/analyse users’ movement.
+5.	Display to the user
+1.	Best ranges of movement.
+2.	Which areas need focus.
+6.	Suggest stretched personalised to the user so that they can practice effectively.
+
+These main objectives were almost all met except for displaying a user’s strongest movements. This is because it is difficult to say without observing more movements.
+
+A lot of functions were developed in the functions.py file for functionality before implemented into the data structure. In development the keypoint, keypointConnections, and jointList attributes were put on a  higher level. The idea was to set these in the Motion class object and pass those attributes as parameters to each MotionPicture object in attempt to save memory and potentially boost performance. Although seeming quite straight forward, in practice it did not seem to A) boost performance in any significant manor and B) cause a few errors in other functions, so it was decided to keep things as they were as everything was working and there was still plenty more to be done within the given timeframe.
+
+At the beginning the idea of being able to analyse a live video was desirable, but as mentioned in the video input section getting it to run smoothly would have been a difficult task as it would require a lot of optimisation. The biggest time consumer is calling the model and opening the wrapper. When looking into other OpenPose API functionality it is possible to pass a batch of data in. If the formatting of the pose data accommodated the JSON output of the pose estimation model, then the number of times the wrapper is called would be 1 call to every current 45 calls. This would be much faster but even so, the frames still must be passed in one at a time and it uses batches of 1.5 seconds of footage (45 frames) for one 1 JSON output to process. Meaning this still would not be ideal for live demonstrations.
+
+Another issue was that when nearing the demonstration period, when trying to use the classification models for implementing dynamic warping. The environment has issues with calling Tensorflow to open a model for predicting (as it was looking for a different version) being too close to the deadline it was decided to give up on this idea and to work elsewhere on Motion.
+
 
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
