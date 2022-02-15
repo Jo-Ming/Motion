@@ -30,6 +30,48 @@ Part Affinity fields for part association needs a confidence value measuring the
 
 From an RGB image input, the Convolutional Neural Network splits into two layers and is stacked, default stack depth is set to 6, refining its predictions at each stage. The first layer outputs Part Confidence Maps, and the second outputting Part Affinity Fields as shown in the pipeline of figure 1. Each iteration of the stack returns more confidence in results. Then finally, outputs are processed by greedy inference to output 2D pose points for each person in frame. Both the body_25 and COCO model mentioned later are based off this architecture (shown in figure 2).
 
+## Motion - Object Oriented Based Structure
+
+Using an object-oriented structure to organise data means that the code will be self-contained and much easier to manage. This will make for easier development anywhere higher up for example when analysing, to find the frame where the nose is at its lowest point could be simply done in much less code as shown in figure 7.
+
+![](imageDirectory/findNose.PNG)
+
+Given that these methods are contained inside the structure. Because of this nature, it might be possible to create a tool in the future for easy addition of analysing other motions.
+
+### Motion Class
+
+The design is to create an Object-Oriented based data structure called a Motion Class. This way when analysing, code can be far clearer and more compact as those objects inherit predefined methods. The Motion object will contain a name, Length (number of frames), and a threshold which will be used as our confidence checking value. It should also contain the location of the output directory. If the models output confidence is below the given threshold, then refrain from using that point for analysis. Just like how the video can be broken down into still images, the self.motionPictureList attribute will be a result of breaking down each frame into another class called a motionPicture.
+The major functions will be:
+
+| Function               | Purpose           | 
+| -------------          |:-------------:| 
+| keypointPathway()      | should return a list with the location of a desired key point throughout a whole motion (at each frame).| 
+| angleTrack()      | returns a list containing the calculated angle of a targeted joint within each frame.      |  
+| codifyMotion() | sets the self.motionPictureList attribute. This will be done by extracting each frame from a video and using them to create motionPicture objects as well as saving each processed frame into a directory.    |    
+| stitchDirectory() | There will be a directory for storing processed frames this function should stitch each frame together to produce an output .avi file.      |   
+
+
+### MotionPicture Class
+
+This object should contain the key points tailored to the output of our implemented model, key point connections to help draw and vectorise our pose (as vectors need a direction). Joints containing which points are related to each other to work out angles of joints represented by a two-dimensional list. The confidence threshold and location of the output directory. In order to compare poses it will be necessary to scale, centre, and normalise a pose, this way variables such as user distance from camera become and position in frame become less important. 
+
+![](imageDirectory/motionPic2.PNG)
+
+| Function               | Purpose           | 
+| -------------          |:-------------:| 
+| setPose()      | Will set the pose attribute by passing extracted frame through the pose estimation model. Then setting the attribute to the desired pose to analyse. | 
+| printKeyPoints()      | Will set the pose attribute by passing extracted frame through the pose estimation model. Then setting the attribute to the desired pose to analyse.|  
+| printJointAngles() | prints joints and their corresponding angles into console.   |    
+| drawSkeleton() | will outline the users pose based on the given estimation.      |   
+| saveSkeleton() | save a jpg into a save directory to be later stitched together into an output.    | 
+| Vectorise() | connect pairs of points with vectors by giving them a magnitude and direction.      | 
+| getSFNPose() | will centre, scale, flatten, and normalise a pose.      | 
+
+### Motion Analysis
+
+Using the created data structure analysing motion will be far more convenient, as once we create an object it will inherit methods making information readily accessible. When analysing a motion in is important to look at relevant and specific areas dedicated to the action performed. For example, in a regular squat the angle of the elbows is unimportant. By looking at proportions and ratios relative to the user as well as angles, the body type of the user should be less important, when comparing to a ”perfect form”. 
+This model should have access to a bank of exercises and their descriptions which can be called and provided to the user post analysis. Each motion wanting to be analysed will require a designated analysis.
+
 ## Implementation/Realisation
 
 ### Implementing a model
