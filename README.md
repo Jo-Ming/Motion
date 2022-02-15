@@ -273,6 +273,16 @@ From there, using trigonometry, it is known that the lengths of sides to any tri
 
 Using this formula, it can be rearranged to make angle C (opposite to corresponding side c) the subject:
 
+![](imageDirectory/cosines.PNG)
+
+Where a, b, and c are sides to a triangle and C is the angle opposite to the corresponding letter side. Knowing this, the code can now be implemented:
+
+![](imageDirectory/findAngles.PNG)
+
+Calculating all the angles did not significantly increase the runtime so it was kept this way. For targeting single selected angles, the process would still be mostly identical except instead of looping through all joints, pointers would be used to target joints.  The important aspect here is to use the confList attribute. This is the pose after all positions which are below the given threshold are removed. Therefore, the angle is only calculated given that there is high enough confidence in all three coordinate estimations. Figure 28 displays the angle finder targeted at the angle of a split. Once confirmed that this function could find the angle of a joint, this could then be implemented to find the angle of every joint in a pose which is show in figure 29.
+
+![](imageDirectory/picsFindAngles.PNG)
+
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
 
