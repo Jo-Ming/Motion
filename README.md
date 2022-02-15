@@ -1,5 +1,9 @@
 # Motion
 
+This was a project I did at University, as the technology was really new at the time, there was very few sources, examples, and references online and so it took a lot of time to figure some of this stuff out. I hope this can help give some people an idea of how to implement the CMU model and save them a lot of time so they can implement them into their own awesome projects :). 
+
+At the end, if I remember, I'll discuss potential methods to improve performance.
+
 ## Abstract
 
 Often today it is very common to measure somebody’s health and wellbeing solely on the basis of speed and strength. Although these are important, often for sport/performance, there is another dimension of flexibility and mobility which are strong contributors to longevity/injury-prevention. One major hurdle for people is that flexibility and mobility take far longer build and train (especially if your biology is that of a male!), and it is easy for a person to fall into the trap of only training what they are good at which is often very inefficient. 
@@ -114,7 +118,7 @@ The model requires RGB image as an input, so to break down and process a video i
 
 Similarly, this can also be done to a locally saved video as shown below in figure 17.
 
-![](imageDirectory/cameraInput2.PNG)
+![](imageDirectory/camerInput2.PNG)
 
 As stated inside figure 17, any processing can be done inside of this loop. By understanding this structure, it can be applied to creating a Motion object from a video. Although the concept for a live video implementation is almost identical to applying it to a saved video but because the python wrapper needs to be called each frame this causes the program to not run smoothly. This might be possible if written in a C++ framework, however it is unlikely this could run smoothly even with high end hardware due to the cost of the following processes after the model.
 
@@ -125,9 +129,103 @@ As this class is ‘lower level’ to the Motion class and is required to fill a
 •	What does it need to be able to do(if asked)? 
 These considerations were considered with which methods could be abstracted into this class. 
 
-3.4.1 Construction and Attributes 
+#### Construction and Attributes 
 
 When constructing the keypoints, keypointConnections, and Joints attributes they are corresponding to the body_25 model (shown in figure 13). The dimensions, imagePath, and threshold are required as parameters. 
+
+## OpenPose API
+
+In order to set the pose attribute for a MotionPicture it is required to first retrieve the pose data from the OpenPose API the following code is explained inside the documentation from the CMU and was copied and tweaked from GitHub (CMU, 2020). So that it was now a callable function with appropriate file paths (figure 19). And instead of directly displaying the image and printing the pose, it now returns the pose data. Once set up other files could just import imgPoseEstimation.py and call the API (Application Programming Interface). 
+
+![](imageDirectory/getPose.PNG)
+
+Files which imported imgPoseEstimation.py could then call this function as follows:
+
+![](imageDirectory/poseFromImage.PNG)
+
+Because this model can detect multiple people and poses the data returned is a list of poses. For example, passing a file path to an image containing only one person as poseFromImage(filePath)  in figure 20 would return something like this:
+
+[[[4.24951630e+02 1.01478683e+02 9.74723041e-01]
+  [4.43344940e+02 1.63868439e+02 7.97661662e-01]
+  [3.91142975e+02 1.67125839e+02 7.77096748e-01]
+  [3.69281586e+02 2.36213181e+02 8.79664004e-01]
+  [3.30594055e+02 2.75015686e+02 8.88313234e-01]
+  [4.95547638e+02 1.58827789e+02 7.52719879e-01]
+  [5.19132263e+02 2.29521042e+02 8.11474919e-01]
+  [5.59648438e+02 2.75049561e+02 8.66122007e-01]
+  [4.43353668e+02 3.12021271e+02 6.32788658e-01]
+  [4.11362610e+02 3.13679657e+02 6.55651212e-01]
+  [4.13121674e+02 4.23184601e+02 7.84300089e-01]
+  [4.13050629e+02 5.30936646e+02 7.88084388e-01]
+  [4.77063782e+02 3.10358734e+02 6.41459703e-01]
+  [4.98923096e+02 4.24820374e+02 7.49234915e-01]
+  [5.15810974e+02 5.39356506e+02 7.12319255e-01]
+  [4.23094666e+02 9.14042511e+01 9.05909777e-01]
+  [4.38323669e+02 9.31388016e+01 9.08547401e-01]
+  [4.13058533e+02 9.98087769e+01 8.48589092e-02]
+  [4.58555389e+02 1.04888695e+02 8.51745188e-01]
+  [5.49480652e+02 5.59617249e+02 6.86516881e-01]
+  [5.52841309e+02 5.56198486e+02 6.92318380e-01]
+  [5.05665833e+02 5.52854980e+02 6.39457822e-01]
+  [4.11380585e+02 5.56209473e+02 7.44374812e-01]
+  [3.99566467e+02 5.52822449e+02 7.53185093e-01]
+  [4.19814209e+02 5.36008179e+02 6.51502967e-01]]]
+
+And for an image with two people, something like this:
+
+[[[3.67780426e+02 1.47870270e+02 9.10241663e-01]
+  [3.76832001e+02 2.03372498e+02 8.32872510e-01]
+  [3.34909760e+02 2.21508362e+02 7.14366794e-01]
+  [3.49575348e+02 3.03181488e+02 8.77458215e-01]
+  [4.09690704e+02 2.94058319e+02 3.40749741e-01]
+  [4.20997498e+02 1.85220963e+02 7.33595967e-01]
+  [4.57341431e+02 2.57810120e+02 8.56255472e-01]
+  [3.89277588e+02 2.88418976e+02 6.67714715e-01]
+  [3.87049835e+02 3.31488525e+02 5.94331682e-01]
+  [3.59851532e+02 3.34884399e+02 5.77581227e-01]
+  [3.71164551e+02 4.14263550e+02 1.31269768e-01]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [4.14220245e+02 3.29217499e+02 5.36360025e-01]
+  [4.02914490e+02 4.14260895e+02 2.11324841e-01]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [3.53015045e+02 1.39880966e+02 8.89510691e-01]
+  [3.75694427e+02 1.34252640e+02 9.03350711e-01]
+  [3.39410858e+02 1.51286880e+02 8.12914848e-01]
+  [3.85854919e+02 1.41028946e+02 2.71930456e-01]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]]
+
+ [[2.64627045e+02 1.07069626e+02 8.45376551e-01]
+  [2.49830505e+02 1.64867065e+02 8.23167682e-01]
+  [1.95499329e+02 1.56905701e+02 6.84393644e-01]
+  [1.83014160e+02 2.55534424e+02 7.63060927e-01]
+  [2.70287689e+02 2.49823242e+02 7.11306155e-01]
+  [3.02002594e+02 1.71647003e+02 7.14712858e-01]
+  [2.95243195e+02 2.65745880e+02 7.98026562e-01]
+  [2.21545120e+02 2.61228577e+02 4.86596704e-01]
+  [2.41931549e+02 3.24691803e+02 5.85075915e-01]
+  [2.11334839e+02 3.25807770e+02 5.40356815e-01]
+  [1.86447784e+02 4.14263397e+02 6.60056770e-02]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [2.74822327e+02 3.29203400e+02 5.25471807e-01]
+  [2.66839874e+02 4.14261292e+02 1.27551153e-01]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [2.55527313e+02 9.45352249e+01 8.88754010e-01]
+  [2.77107910e+02 9.90950928e+01 8.83939087e-01]
+  [2.37414078e+02 9.79929886e+01 8.26341331e-01]
+  [2.87284180e+02 1.09303017e+02 7.49875844e-01]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]
+  [0.00000000e+00 0.00000000e+00 0.00000000e+00]]]
+
+This returns a coordinate and confidence for each key point using a list of String types. This is not in a useful form and even for 1 person it is returned as a 3-Dimensional list, a  list for each image containing a pose. The format of the list after dimensionality reduction of the list will be 2-Dimensional, then splitting each element in the list from [string] to  [x, y , confidence].
 
 
 ## Demo
