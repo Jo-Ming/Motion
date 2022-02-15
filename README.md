@@ -51,27 +51,7 @@ his model was significantly better, as it ran between 14-15 frames per second ev
 
 As shown in figure 13 this mapping Is far more intricate which will allow for more in-depth analysis. For example, by having points 1 (Neck), 8 (Mid-hip), 9 (Right-hip), and 12 (Left-Hip). It is much easier to detect posture or tilting in the upper body. It also looks to be a much truer representation of  a human pose. This model also maps below the ankle ,points 21 and 21 track the heels and points (22,23) , (19,20) tracks the big and little toes on each foot. This degree of pose estimation allows analysis in the relationship between heel and toes. This can be used as an indicator for balance or for a squat, it could show if heels are leaving the ground (which is quite common in inflexible people) and can be done by looking at the distances between the ankles and toes. In the real world, these distances will not change however, if the distance between the corresponding toes and ankles increase from the perspective of the camera then the cause of this would be due to the heel coming off the floor. Because of the overwhelming advantages and good documentation for the second implementation, that was the model chosen in the further development of Motion.
 
-## Demo
-will do some more detailed documentation explaining how ot works and the maths behind it another day.
-
-![](imageDirectory/dataflow.png)
-
-![](imageDirectory/exampleInput.png)
-
-![](imageDirectory/skeleton.png)
-
-![](imageDirectory/allAngles.png)
-
-![](imageDirectory/splits.png)
-
-![](imageDirectory/squatAngles.png)
-
-![](imageDirectory/outputExample.png)
-
-
-
-
-## Environment Set Up
+### Environment Set Up
 
 Setting up a working environment proved to be very difficult as every user online had a different set up. This took a large amount of time trying different combinations which others claimed to work. Firstly Tensorflow-gpu and Keras were set up and installed within the environment. In the end downgrading Cuda from 11.1 to 10.2 and Cudnn from 8.0.5 to 7.6.5 helped solve some compatibility issues (although various other driver updates were installed). Cmake was used as a python wrapper for the model. The last hurdle was building the environment, downgrading to Visual Studio 2017 but only by using the Enterprise edition somehow worked. In the end, the environment was as follows:
 
@@ -125,3 +105,48 @@ Open cmake:
 ![](imageDirectory/cmake2.png)
 
 Set the correct location for source code and to the binary files. Select the boxes shown especially BUILD_PYTHON and the body_25 model as shown in image. Then click open project and be sure to generate it for windows 64x with visual studio 17 and build the solution. 
+
+### Getting video Input
+
+The model requires RGB image as an input, so to break down and process a video it is required to get each RGB image component. With OpenCV using cv2.videoCapture(0) can use the webcam as shown in figure 16.
+
+![](imageDirectory/cameraInput.PNG)
+
+Similarly, this can also be done to a locally saved video as shown below in figure 17.
+
+![](imageDirectory/cameraInput2.PNG)
+
+As stated inside figure 17, any processing can be done inside of this loop. By understanding this structure, it can be applied to creating a Motion object from a video. Although the concept for a live video implementation is almost identical to applying it to a saved video but because the python wrapper needs to be called each frame this causes the program to not run smoothly. This might be possible if written in a C++ framework, however it is unlikely this could run smoothly even with high end hardware due to the cost of the following processes after the model.
+
+### MotionPicture Class
+
+As this class is ‘lower level’ to the Motion class and is required to fill an important motion attribute it was decided to implement the MotionPicture class first. To approach this, the following questions were asked: 
+•	What does it need to ‘know’?
+•	What does it need to be able to do(if asked)? 
+These considerations were considered with which methods could be abstracted into this class. 
+
+3.4.1 Construction and Attributes 
+
+When constructing the keypoints, keypointConnections, and Joints attributes they are corresponding to the body_25 model (shown in figure 13). The dimensions, imagePath, and threshold are required as parameters. 
+
+
+## Demo
+will do some more detailed documentation explaining how ot works and the maths behind it another day.
+
+![](imageDirectory/dataflow.png)
+
+![](imageDirectory/exampleInput.png)
+
+![](imageDirectory/skeleton.png)
+
+![](imageDirectory/allAngles.png)
+
+![](imageDirectory/splits.png)
+
+![](imageDirectory/squatAngles.png)
+
+![](imageDirectory/outputExample.png)
+
+
+
+
