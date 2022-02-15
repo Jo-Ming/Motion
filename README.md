@@ -305,6 +305,36 @@ This way the relationships of each points are relative to the centre of the pose
 
 With the pose data in this format pose comparison data becomes far more valid. Although different body types can still have varying proportions, this is still far more credible than comparing the original data. The function mad also passes a flat list, meaning it is possible to use this as an input for a convolutional neural network.
 
+![](imageDirectory/getFSNPose.PNG)
+
+### Motion class
+
+The purpose of this class is to be able to apply functionality over a whole motion (.mp4) and all its counterparts. For example, to draw the pose over a whole motion, draw the pose over each motion picture and stitch them together. 
+
+Construction and Attributes
+
+To construct a Motion, 3 parameters are required. A name for displaying and saving, video path so that required data can be fetched, and a threshold to know the lowest confidence that will be tolerated for processing. The length is determined by how many frames are in the video.
+
+Codify Motion
+
+The purpose of this method is to populate the list inside the self.motionPictureList attribute with MotionPicture objects and to save the processed frames into a directory. The full function is available in appendix 1. The first objective is to extract each frame inside of functions.py an extractVideoFrames() was already made. So then by using a video capture object, object.read() will return frames. Next job is to then process each extracted frame by creating a MotionPicture object and drawing the pose/skeleton then saving it like so:
+
+
+![](imageDirectory/codeFrames.PNG)
+
+As shown in figure 36 each frame is saved under its corresponding name and frame number after being processed. Otherwise, if the test frame is unsuccessful, throw an error.  The function os.path.join() uses a string for a parameter and can be used to set a pathway to the save directories.
+
+### Stitching frame Directory
+
+Once all the processed frames are saved, in order to output a video the frames must be stitched together. This was done using the cv2.videoWriterObject and the directory was traversed through looping through shown in figure 30 frames one at a time. However, there was an issue that the order in which the frames collected were consistent but not the order in which they are saved in the directory. The same issue arises when using glob and a couple of other similar tools, on top of this using the built in .sort() function would sort them into this same unwanted order too. The conclusion was made that they were in order of some kind, just not the sequential order needed for a smooth video.  
+
+![](imageDirectory/stitchDirectory.PNG)
+
+To get around this issue a quicksort function was implemented in the functions.py file and called as shown in figure 38.
+
+![](imageDirectory/sortFrames.PNG)
+
+This quicksort/merge sort hybrid using recursion shown in figure 38 is more efficient over sorting a smaller number of elements (up to around 100,000) than the traditional quicksort as there is no generation/replication of lists each iteration. A typical quick sort will pass 3 lists each recursive call smaller values, equal values, larger values. So, for shorter lists, this method is better optimised.
 
 ## Demo
 will do some more detailed documentation explaining how ot works and the maths behind it another day.
